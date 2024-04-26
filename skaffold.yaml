@@ -1,0 +1,37 @@
+apiVersion: skaffold/v4beta10
+kind: Config
+metadata:
+  name: stock-kstream-example
+profiles:
+  - name: stock-quote-kstream
+    build:
+      insecureRegistries:
+        - "localhost:32000"
+      tagPolicy:
+        dateTime:
+          format: "2006-01-02_15-04-05.999_MST"
+          timezone: "Local"
+      artifacts:
+        - image: localhost:32000/kwonghung/stock-quote-kstream
+          context: ./spring-boot/stock-quote-kstream
+          custom:
+          # $IMAGE is set by skaffold included the temporary tag
+          # https://skaffold.dev/docs/builders/builder-types/custom/
+            buildCommand: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=$IMAGE -DskipTests
+    deploy:
+      helm:
+        releases:
+          - name: stock-quote-kstream
+            chartPath: ./spring-boot/stock-quote-kstream/helm
+            version: 1.0.0
+            namespace: application
+            createNamespace: true
+            setValueTemplates:
+              image:tag: "{{.IMAGE_TAG_localhost_32000_kwonghung_stock_quote_kstream }}@{{.IMAGE_DIGEST_localhost_32000_kwonghung_stock_quote_kstream }}"
+            recreatePods: false
+            skipBuildDependencies: false
+            skipTests: false
+            useHelmSecrets: false
+            wait: false
+
+

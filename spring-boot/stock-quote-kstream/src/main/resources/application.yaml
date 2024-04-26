@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: stock-quote-kstream
+  
+  docker:
+    compose:
+      enabled: false
+
+  json:
+    trusted:
+      packages: org.hung.kstream.stockquotekstream.domain
+
+  kafka:
+    streams:
+      application-id: quote-processor
+
+  profiles:
+    default: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - local
+
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yaml
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+                
+    streams:
+      bootstrap-servers: localhost:9092
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        spring.json.trusted.packages: org.hung.kstream.stockquotekstream.domain
+        num.partitions: "10"
+        application.server: "ubuntu-22-04-4-desktop:9092"
+
+  security:
+    user:
+      name: john
+      password: passwd
+      roles: user 
+
+quote-processor:
+  kafka:
+    topics:
+      price-feed: price-feed
+      volume-feed: volume-feed

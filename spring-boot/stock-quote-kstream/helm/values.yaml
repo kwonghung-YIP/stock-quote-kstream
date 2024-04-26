@@ -1,0 +1,7 @@
+image:
+  repository: localhost:32000/kwonghung/stock-quote-kstream
+  tag: 1.0.0
+  pullPolicy: Always
+replicas: 1
+spring:
+  profiles: microk8s
