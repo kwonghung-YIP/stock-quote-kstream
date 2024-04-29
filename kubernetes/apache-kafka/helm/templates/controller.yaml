@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.controller.service.name }}
+spec:
+  ports:
+    - port: {{ .Values.controller.port }}
+      name: conroller
+  clusterIP: None
+  selector:
+    app: kafka
+    role: controller
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.controller.statefulset.name }}
+spec:
+  serviceName: "controller"
+  replicas: {{ .Values.controller.replicas }}
+  ordinals:
+    start: {{ .Values.controller.ordinals.start }}
+  selector:
+    matchLabels:
+      app: kafka
+      role: controller
+  template:
+    metadata:
+      labels:
+        app: kafka
+        role: controller
+    spec:
+      containers:
+        - name: kafka-controller
+          image: apache/kafka:{{ .Values.kafka.version }}
+          ports:
+            - containerPort: {{ .Values.controller.port }}
+              name: controller
+          env:
+            - name: K8S_PODIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: KAFKA_PROCESS_ROLES
+              value: controller
+            - name: KAFKA_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: {{ include "controller.quorum.voters" . }}
+            - name: KAFKA_LISTENERS
+              value: "CONTROLLER://$(K8S_PODIP):{{ .Values.controller.port }}"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: CONTROLLER:PLAINTEXT
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: CONTROLLER

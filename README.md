@@ -23,4 +23,14 @@ skaffold dev \
     --namespace='application' \
     --skip-tests=true \
     --port-forward=user
+
+helm install stock-quote-kstream ./kubernetes/apache-kafka/helm \
+    --dry-run --debug \
+    --namespace kadka
+
+skaffold dev \
+    --profile=apache-kafka-cluster \
+    --namespace='kafka' \
+    --skip-tests=true \
+    --port-forward=user
 ```

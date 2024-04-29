@@ -1,0 +1,26 @@
+kubernetes:
+  cluster: cluster.local
+
+kafka:
+  version: 3.7.0
+  clusterId: JFb61d2pD6fe224FbsjoZl 
+
+controller:
+  replicas: 3
+  ordinals:
+    start: 1
+  port: 9093
+  statefulset:
+    name: controller-node
+  service:
+    name: controller
+
+broker:
+  replicas: 3
+  ordinals:
+    start: 10
+  port: 9092
+  statefulset:
+    name: broker-node
+  service:
+    name: broker
