@@ -18,4 +18,4 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: SPRING_PROFILES_ACTIVE
-            value: {{ .Values.spring.porfiles }}
+            value: {{ .Values.spring.profiles }}

@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
-@Profile("local")
+@Profile("quote-producer")
 @EnableScheduling
 public class FeedsProducerConfig {
 

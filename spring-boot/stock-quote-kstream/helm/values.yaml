@@ -4,4 +4,4 @@ image:
   pullPolicy: Always
 replicas: 1
 spring:
-  profiles: microk8s
+  profiles: microk8s,quote-producer

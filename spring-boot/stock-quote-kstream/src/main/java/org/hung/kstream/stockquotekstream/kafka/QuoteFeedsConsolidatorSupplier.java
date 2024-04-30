@@ -2,7 +2,6 @@ package org.hung.kstream.stockquotekstream.kafka;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.Set;
