@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgres
+          {{- with .Values.postgresql.image }}
+          image: {{ .registry }}/{{ .name }}:{{ .tag }}
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.postgresql.port }}
+          env:
+          {{- with .Values.postgresql.env }}
+            - name: POSTGRES_USER
+              value: {{ .user }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .passwd }}
+            - name: POSTGRES_DB
+              value: {{ .db }}
+          {{- end }}
+          volumeMounts:
+          - name: init-sql
+            mountPath: "/docker-entrypoint-initdb.d/init-stock-quote.sql"
+            subPath: init-stock-quote.sql
+            readOnly: true
+      volumes:
+        - name: init-sql
+          configMap:
+            name: postgresql-init-sql
+            items:
+              - key: "init-stock-quote.sql"
+                path: "init-stock-quote.sql"

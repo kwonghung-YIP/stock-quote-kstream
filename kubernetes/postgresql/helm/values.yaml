@@ -1,0 +1,11 @@
+postgresql:
+  version: 16.2
+  port: 5432
+  image:
+    registry: docker.io
+    name: debezium/postgres
+    tag: 16
+  env:
+    db: db1
+    user: admin
+    passwd: passwd

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-init-sql
+data:
+  init-stock-quote.sql: |-
+{{ .Files.Get "init-stock-quote.sql" | indent 4 }}

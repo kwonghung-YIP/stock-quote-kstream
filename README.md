@@ -24,13 +24,25 @@ skaffold dev \
     --skip-tests=true \
     --port-forward=user
 
-helm install stock-quote-kstream ./kubernetes/apache-kafka/helm \
+helm install kafka-cluster ./kubernetes/apache-kafka/helm \
     --dry-run --debug \
-    --namespace kadka
+    --namespace kafka
 
 skaffold dev \
     --profile=apache-kafka-cluster \
     --namespace='kafka' \
     --skip-tests=true \
+    --port-forward=user
+
+helm install portgresql ./kubernetes/postgresql/helm \
+    --dry-run --debug \
+    --namespace postgresql
+
+skaffold dev \
+    --profile=postgresql \
+    --port-forward=user
+
+skaffold dev \
+    -p postgresql,kafka \
     --port-forward=user
 ```

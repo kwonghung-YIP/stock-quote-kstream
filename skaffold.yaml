@@ -3,14 +3,23 @@ kind: Config
 metadata:
   name: stock-kstream-example
 profiles:
-  - name: apache-kafka-cluster
+  - name: kafka
     deploy:
       helm:
         releases:
-          - name: apache-kafka-cluster
+          - name: kafka
             chartPath: ./kubernetes/apache-kafka/helm
             version: 1.0.0
             namespace: kafka
+            createNamespace: true
+  - name: postgresql
+    deploy:
+      helm:
+        releases:
+          - name: postgresql
+            chartPath: ./kubernetes/postgresql/helm
+            version: 1.0.0
+            namespace: postgresql
             createNamespace: true
   - name: stock-quote-kstream
     build:
