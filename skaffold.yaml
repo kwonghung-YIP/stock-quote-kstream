@@ -3,11 +3,11 @@ kind: Config
 metadata:
   name: stock-kstream-example
 profiles:
-  - name: kafka
+  - name: apache-kafka-cluster
     deploy:
       helm:
         releases:
-          - name: kafka
+          - name: apache-kafka-cluster
             chartPath: ./kubernetes/apache-kafka/helm
             version: 1.0.0
             namespace: kafka
