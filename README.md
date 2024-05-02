@@ -30,8 +30,6 @@ helm install kafka-cluster ./kubernetes/apache-kafka/helm \
 
 skaffold dev \
     --profile=apache-kafka-cluster \
-    --namespace='kafka' \
-    --skip-tests=true \
     --port-forward=user
 
 helm install portgresql ./kubernetes/postgresql/helm \
@@ -46,3 +44,38 @@ skaffold dev \
     -p postgresql,kafka \
     --port-forward=user
 ```
+
+```bash
+# run connect-standalone.sh with default connect-standalone.properties with kubectl
+kubectl run --stdin --tty \
+    kafka-connect-standalone --image=apache/kafka:3.7.0 \
+    --restart=Never --rm --namespace=kafka --command -- \
+    /opt/kafka/bin/connect-standalone.sh /opt/kafka/config/connect-standalone.properties
+
+# run connect-distributed.sh with default connect-distributed.properties with kubectl
+kubectl run --stdin --tty \
+    kafka-connect-distributed --image=apache/kafka:3.7.0 \
+    --restart=Never --rm --namespace=kafka --command -- \
+    /opt/kafka/bin/connect-distributed.sh /opt/kafka/config/connect-distributed.properties
+
+kubectl run --stdin --tty \
+    apache-kafka --image=apache/kafka:3.7.0 \
+    --restart=Never --rm --namespace=kafka --command -- \
+    /bin/bash
+```
+
+```bash
+# call kafka connect REST api with netshoot image (since curl does not included in apache kafka image)
+kubectl run --stdin --tty \
+    netshoot --image=nicolaka/netshoot:latest \
+    --restart=Never --rm --namespace=kafka --command -- \
+    curl -X GET \
+    -H "Accept:application/json" \
+    connect-node-1.connect.kafka.svc.cluster.local:8083/connectors\?expand=status\&expand=info | jq .
+
+kubectl run --stdin --tty \
+    netshoot --image=nicolaka/netshoot:latest \
+    --restart=Never --rm --namespace=kafka --command -- \
+    /bin/bash
+```
+

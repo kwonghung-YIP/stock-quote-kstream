@@ -24,3 +24,14 @@ broker:
     name: broker-node
   service:
     name: broker
+
+connect:
+  replicas: 1
+  ordinals:
+    start: 1
+  port: 
+    rest: 8083
+  statefulset:
+    name: connect-node
+  service:
+    name: connect

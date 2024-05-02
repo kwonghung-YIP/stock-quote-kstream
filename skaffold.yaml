@@ -2,8 +2,17 @@ apiVersion: skaffold/v4beta10
 kind: Config
 metadata:
   name: stock-kstream-example
+build:
+  insecureRegistries:
+    - "localhost:32000"
 profiles:
   - name: apache-kafka-cluster
+    build:
+      artifacts:
+        - image: localhost:32000/kwonghung/custom-kafka-connect
+          context: ./kubernetes/apache-kafka/kafka-connect
+          docker:
+            dockerfile: Dockerfile
     deploy:
       helm:
         releases:

@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.connect.service.name }}
+spec:
+  ports:
+    - port: {{ .Values.connect.port.rest }}
+      name: rest
+  clusterIP: None
+  selector:
+    app: kafka
+    role: connect
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.connect.statefulset.name }}
+spec:
+  serviceName: "connect"
+  replicas: 1
+  ordinals:
+    start: 1
+  selector:
+    matchLabels:
+      app: kafka
+      role: connect
+  template:
+    metadata:
+      labels:
+        app: kafka
+        role: connect
+    spec:
+      containers:
+        - name: kafka-connect
+          image: localhost:32000/kwonghung/custom-kafka-connect
+          #command: ["bin/connect-standalone.sh"]
+          #args: ["config/connect-standalone.properties"]
+          #workingDir: /opt/kafka
+          args: ["config/connect-file-source.properties"]
+          ports:
+            - containerPort: {{ .Values.connect.port.rest }}
+              name: rest
+          volumeMounts:
+            - name: connect-properties
+              mountPath: "/opt/kafka/config/connect-standalone.properties"
+              subPath: connect-standalone.properties
+      volumes:
+        - name: connect-properties
+          configMap:
+            name: kafka-connect-config

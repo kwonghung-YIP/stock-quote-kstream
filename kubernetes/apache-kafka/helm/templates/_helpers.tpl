@@ -19,3 +19,21 @@ Create the "controller.quorum.voters" list
 {{- end -}}
 {{- printf "%s" (join "," $controllerList)}}
 {{- end -}}
+
+{{/*
+Create the "bootstrap.servers" list
+*/}}
+{{- define "bootstrap.servers" -}}
+{{- $start := $.Values.broker.ordinals.start | int -}}
+{{- $end := add $start (int $.Values.broker.replicas) -1 | int -}}
+{{- $port := $.Values.broker.port | toString -}}
+{{- $service := $.Values.broker.service.name -}}
+{{- $node := $.Values.broker.statefulset.name -}}
+{{- $serverList := list -}}
+{{- range $id := seq $start $end | splitList " " -}}
+{{- $host := printf "%s-%s.%s.%s" $node $id $service (include "k8s.subdomain" $) -}}
+{{- $bootstrap := printf "%s:%s" $host $port -}}
+{{- $serverList = append $serverList $bootstrap -}}
+{{- end -}}
+{{- printf "%s" (join "," $serverList)}}
+{{- end -}}
