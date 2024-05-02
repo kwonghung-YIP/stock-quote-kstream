@@ -36,7 +36,7 @@ spec:
           #command: ["bin/connect-standalone.sh"]
           #args: ["config/connect-standalone.properties"]
           #workingDir: /opt/kafka
-          args: ["config/connect-file-source.properties"]
+          args: ["config/debezium-postgres-src-connector.properties"]
           ports:
             - containerPort: {{ .Values.connect.port.rest }}
               name: rest
@@ -44,6 +44,9 @@ spec:
             - name: connect-properties
               mountPath: "/opt/kafka/config/connect-standalone.properties"
               subPath: connect-standalone.properties
+            - name: connect-properties
+              mountPath: "/opt/kafka/config/debezium-postgres-src-connector.properties"
+              subPath: debezium-postgres-src-connector.properties
       volumes:
         - name: connect-properties
           configMap:

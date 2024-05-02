@@ -21,3 +21,5 @@ data:
 
     # Flush much faster than normal, which is useful for testing/debugging
     offset.flush.interval.ms=10000
+  debezium-postgres-src-connector.properties: |-
+{{ .Files.Get "debezium-postgres-src-connector.properties" | indent 4 }}

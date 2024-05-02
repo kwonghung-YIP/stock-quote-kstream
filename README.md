@@ -28,17 +28,13 @@ helm install kafka-cluster ./kubernetes/apache-kafka/helm \
     --dry-run --debug \
     --namespace kafka
 
-skaffold dev \
-    --profile=apache-kafka-cluster \
-    --port-forward=user
+skaffold dev --profile=apache-kafka-cluster
 
 helm install portgresql ./kubernetes/postgresql/helm \
     --dry-run --debug \
     --namespace postgresql
 
-skaffold dev \
-    --profile=postgresql \
-    --port-forward=user
+skaffold dev --profile=postgresql
 
 skaffold dev \
     -p postgresql,kafka \
