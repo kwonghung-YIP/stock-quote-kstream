@@ -81,7 +81,12 @@ kubectl get pods -lapp=postgresql -n=postgresql -o jsonpath='{.items[0].metadata
 kubectl exec --stdin --tty \
     $(kubectl get pods -lapp=postgresql -n=postgresql -o jsonpath='{.items[0].metadata.name}') \
     --namespace=postgresql -- \
-    psql --host=localhost --username=admin --dbname=db1 -c "call stock.genRandomPriceFeed();"
+    psql --host=localhost --username=admin --dbname=db1 -c "call stock.genRandomPriceFeed(5,1,10);"
+
+kubectl exec --stdin --tty \
+    $(kubectl get pods -lapp=postgresql -n=postgresql -o jsonpath='{.items[0].metadata.name}') \
+    --namespace=postgresql -- \
+    psql --host=localhost --username=admin --dbname=db1 -c "call stock.genRandomVolumeFeed(10,1,10);"
 ```
 
 ```sql
