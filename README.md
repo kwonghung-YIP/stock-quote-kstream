@@ -75,3 +75,20 @@ kubectl run --stdin --tty \
     /bin/bash
 ```
 
+```bash
+kubectl get pods -lapp=postgresql -n=postgresql -o jsonpath='{.items[0].metadata.name}'
+
+kubectl exec --stdin --tty \
+    $(kubectl get pods -lapp=postgresql -n=postgresql -o jsonpath='{.items[0].metadata.name}') \
+    --namespace=postgresql -- \
+    psql --host=localhost --username=admin --dbname=db1 -c "call stock.genRandomPriceFeed();"
+```
+
+```sql
+SELECT code,(1/52.0)*init_price 
+from stock.stock_statistic
+where code = 'AMD';
+
+call stock.nextPriceFeed('AAPL',1/52.0);
+call stock.genRandomPriceFeed();
+```

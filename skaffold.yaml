@@ -6,7 +6,7 @@ build:
   insecureRegistries:
     - "localhost:32000"
 profiles:
-  - name: apache-kafka-cluster
+  - name: kafka
     build:
       artifacts:
         - image: localhost:32000/kwonghung/custom-kafka-connect

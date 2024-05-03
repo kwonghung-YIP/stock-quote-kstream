@@ -5,3 +5,5 @@ metadata:
 data:
   init-stock-quote.sql: |-
 {{ .Files.Get "init-stock-quote.sql" | indent 4 }}
+  stock-statistic.csv: |-
+{{ .Files.Get "stock-statistic.csv" | indent 4 }}

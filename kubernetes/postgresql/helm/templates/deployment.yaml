@@ -32,10 +32,11 @@ spec:
             mountPath: "/docker-entrypoint-initdb.d/init-stock-quote.sql"
             subPath: init-stock-quote.sql
             readOnly: true
+          - name: init-sql
+            mountPath: "/docker-entrypoint-initdb.d/stock-statistic.csv"
+            subPath: stock-statistic.csv
+            readOnly: true
       volumes:
         - name: init-sql
           configMap:
             name: postgresql-init-sql
-            items:
-              - key: "init-stock-quote.sql"
-                path: "init-stock-quote.sql"
