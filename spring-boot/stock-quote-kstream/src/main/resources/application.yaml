@@ -6,10 +6,6 @@ spring:
     compose:
       enabled: false
 
-  json:
-    trusted:
-      packages: org.hung.kstream.stockquotekstream.domain
-
   kafka:
     streams:
       application-id: quote-processor
@@ -69,6 +65,9 @@ spring:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
         spring.json.trusted.packages: org.hung.kstream.stockquotekstream.domain
+        #spring.json.use.type.headers: true
+        #spring.json.value.default.type: true
+        spring.json.value.type.method: org.hung.kstream.stockquotekstream.domain.QuoteFeed.resolveJavaType
         num.partitions: "10"
   
   security:
@@ -80,8 +79,8 @@ spring:
 quote-processor:
   kafka:
     topics:
-      price-feed: price-feed
-      volume-feed: volume-feed
+      price-feed: pg_stock_price_feed
+      volume-feed: pg_stock_volume_feed
 
 ---
 spring:

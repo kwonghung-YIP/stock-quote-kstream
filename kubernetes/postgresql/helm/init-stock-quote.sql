@@ -94,7 +94,7 @@ declare
     stat record;
     delta_t numeric;
 begin
-    delta_t = 1.0/(252*8*60*60);
+    delta_t = 1.0/(252*8*60);
 
     for cnt in 1..p_cnt
     loop
@@ -103,6 +103,7 @@ begin
             order by random() limit p_batch
         loop
             call stock.nextPriceFeed(stat,delta_t);
+            commit;
         end loop;
 
         perform pg_sleep(round(random()*p_max_timeout));
@@ -119,7 +120,7 @@ declare
     stat record;
     interval integer;
 begin
-    interval = (8*60*60);
+    interval = (8*60);
 
     for cnt in 1..p_cnt
     loop
@@ -128,6 +129,7 @@ begin
             order by random() limit p_batch
         loop
             call stock.nextVolumeFeed(stat,interval);
+            commit;
         end loop;
 
         perform pg_sleep(round(random()*p_max_timeout));

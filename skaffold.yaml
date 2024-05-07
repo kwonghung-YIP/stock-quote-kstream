@@ -21,6 +21,13 @@ profiles:
             version: 1.0.0
             namespace: kafka
             createNamespace: true
+    portForward:
+      - resourceType: Service
+        resourceName: kafka-ui
+        namespace: kafka
+        port: 8080
+        address: 0.0.0.0
+        localPort: 18081
   - name: postgresql
     deploy:
       helm:

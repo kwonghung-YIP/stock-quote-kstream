@@ -35,3 +35,6 @@ connect:
     name: connect-node
   service:
     name: connect
+
+ui:
+  port: 8080

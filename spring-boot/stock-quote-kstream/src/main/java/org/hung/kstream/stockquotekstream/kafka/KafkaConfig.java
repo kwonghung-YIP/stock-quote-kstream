@@ -13,6 +13,7 @@ import org.springframework.kafka.config.KafkaStreamsInfrastructureCustomizer;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
 import org.springframework.kafka.support.serializer.JsonSerde;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
