@@ -1,9 +1,22 @@
 version: '3.8'
 services:
-
   kafka:
     image: apache/kafka:3.7.0
     container_name: kafka
     ports:
       - 9092:9092
-
+    #  - 9093:9093
+    #environment:
+    #  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://kafka:9093
+  #kafka-ui:
+  #  image: provectuslabs/kafka-ui:latest
+  #  container_name: kafka-ui
+  #  environment:
+  #    KAFKA_CLUSTERS_0_NAME: local
+  #    KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 192.168.19.134:9092
+  #    KAFKA_CLUSTERS_0_JMXPORT: 9101
+  #    KAFKA_CLUSTERS_0_SCHEMAREGISTRY: "http://schema-registry:8081"
+  #  depends_on:
+  #    - kafka
+  #  ports:
+  #    - 18081:8080

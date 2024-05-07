@@ -95,7 +95,7 @@ public class FeedsProducerConfig {
         public void genVolumeFeed() {
             log.info("Send volumeFeed message...");
             VolumeFeed feed = genRandomVolumeFeed();
-            ProducerRecord<String,VolumeFeed> record = new ProducerRecord<>(priceFeedTopicName,feed.getCode(),feed);
+            ProducerRecord<String,VolumeFeed> record = new ProducerRecord<>(volumeFeedTopicName,feed.getCode(),feed);
             volumeFeedTemplate.send(record);
         }
     }
