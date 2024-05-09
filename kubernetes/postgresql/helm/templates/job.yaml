@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: price-feed-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: psql
+          image: docker.io/postgres:16.2
+          {{- with .Values.postgresql.env }}
+          command: ["psql","-hpostgres-db.postgresql.svc.cluster.local","-U{{ .user }}","-d{{ .db }}","-c","call stock.genRandomPriceFeed(500,1,10);"]
+          env:
+            - name: PGPASSWORD
+              value: {{ .passwd }}
+          {{- end }}
+      restartPolicy: Never
+  backoffLimit: 4
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: volume-feed-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: psql
+          image: docker.io/postgres:16.2
+          {{- with .Values.postgresql.env }}
+          command: ["psql","-hpostgres-db.postgresql.svc.cluster.local","-U{{ .user }}","-d{{ .db }}","-c","call stock.genRandomVolumeFeed(500,1,10);"]
+          env:
+            - name: PGPASSWORD
+              value: {{ .passwd }}
+          {{- end }}
+      restartPolicy: Never
+  backoffLimit: 4
