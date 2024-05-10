@@ -1,0 +1,6 @@
+dependencies:
+- name: postgresql
+  repository: file://../../postgresql/helm
+  version: 1.0.0
+digest: sha256:cbceb42e1ee8048de5f613de8a2f5b5e7dd505819bdce94b9707167443e063cb
+generated: "2024-05-10T00:48:29.285933887+01:00"

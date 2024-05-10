@@ -5,3 +5,5 @@ image:
 replicas: 3
 spring:
   profiles: microk8s
+ports:
+  rest: 8080

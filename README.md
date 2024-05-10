@@ -3,8 +3,8 @@
 
 ```bash
 #test API with curl
-curl -v -u john:passwd http://localhost:8080/quote/AAPL
-curl -v -u john:passwd http://localhost:8080/quote/
+curl -v -u john:passwd http://localhost:8080/quote/find/MAR | jq .
+curl -v -u john:passwd http://localhost:8080/quote/all | jq .
 
 #remove all container
 docker rm -f `docker ps -qa`
@@ -21,16 +21,22 @@ docker exec -it kafka \
     --topic volume-feed --from-beginning \
     --property print.headers=true
 
+docker exec -it kafka \
+    /opt/kafka/bin/kafka-console-consumer.sh \
+    --bootstrap-server localhost:9092 \
+    --topic quote --from-beginning \
+    --property print.headers=true \
+    --property print.key=true
+
 docker exec -it -w /opt/kafka/bin kafka  \
     /bin/bash
 
 helm install stock-quote-kstream ./ \
     --dry-run --debug \
-    --namespace application
+    --namespace application \
 
 skaffold dev \
     --profile=stock-quote-kstream \
-    --namespace='application' \
     --skip-tests=true \
     --port-forward=user
 
@@ -38,7 +44,7 @@ helm install kafka-cluster ./kubernetes/apache-kafka/helm \
     --dry-run --debug \
     --namespace kafka
 
-skaffold dev --profile=kafka --port-forward=user
+skaffold run --profile=kafka --port-forward=user
 
 helm install portgresql ./kubernetes/postgresql/helm \
     --dry-run --debug \
@@ -82,21 +88,23 @@ kubectl exec --stdin --tty \
     /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server localhost:9092 \
     --topic pg_stock_price_feed --from-beginning \
-    --property print.headers=true
+    --property print.headers=true \
+    --property print.key=true
 
 kubectl exec --stdin --tty \
     broker-node-10 --namespace=kafka -- \
     /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server localhost:9092 \
     --topic pg_stock_volume_feed --from-beginning \
-    --property print.headers=true
+    --property print.headers=true 
 
 kubectl exec --stdin --tty \
     broker-node-10 --namespace=kafka -- \
     /opt/kafka/bin/kafka-console-consumer.sh \
     --bootstrap-server localhost:9092 \
     --topic quote --from-beginning \
-    --property print.headers=true
+    --property print.headers=true \
+    --property print.key=true
 
 kubectl exec --stdin --tty \
     broker-node-10 --namespace=kafka -- \
@@ -114,7 +122,7 @@ kubectl run --stdin --tty \
 
 kubectl run --stdin --tty \
     netshoot --image=nicolaka/netshoot:latest \
-    --restart=Never --rm --namespace=kafka --command -- \
+    --restart=Never --rm --namespace=application --command -- \
     /bin/bash
 ```
 
@@ -148,3 +156,4 @@ call stock.genRandomPriceFeed();
 ```
 References:
 [Kafka-UI configuration properties](https://docs.kafka-ui.provectus.io/configuration/misc-configuration-properties)
+[Kubernetes - DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)

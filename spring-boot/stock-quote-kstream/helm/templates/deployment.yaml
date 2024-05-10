@@ -12,10 +12,25 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      #hostname: $(K8S_POD_NAME)
+      #setHostnameAsFQDN: true
       containers:
         - name: spring-boot
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: {{ .Values.ports.rest }}
+            name: rest
           env:
-          - name: SPRING_PROFILES_ACTIVE
-            value: {{ .Values.spring.profiles }}
+            - name: K8S_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.spring.profiles }}
+            - name: SPRING_KAFKA_STREAMS_PROPERTIES_APPLICATION_SERVER
+              value: $(K8S_POD_IP):{{ .Values.ports.rest }}
