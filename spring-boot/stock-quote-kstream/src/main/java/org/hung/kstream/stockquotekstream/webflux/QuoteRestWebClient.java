@@ -11,10 +11,12 @@ import reactor.core.publisher.Mono;
 @HttpExchange("/quote")
 public interface QuoteRestWebClient {
 
-    @GetExchange("/{code}")
+    @GetExchange("/find/{code}")
     Mono<Quote> getQuoteByCode(@PathVariable String code);
 
-    @GetExchange("/")
+    @GetExchange("/all")
     Flux<Quote> getAllQuote();
 
+    @GetExchange("/own")
+    Flux<Quote> getOwnQuote();
 }

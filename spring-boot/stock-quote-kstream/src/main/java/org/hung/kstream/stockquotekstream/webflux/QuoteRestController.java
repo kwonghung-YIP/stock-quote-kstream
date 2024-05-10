@@ -21,15 +21,18 @@ public class QuoteRestController {
     
     private final QuoteService quoteService; 
 
-    @GetMapping("/{code}")
+    @GetMapping("/find/{code}")
     public Mono<Quote> getQuote(@PathVariable String code) {
         return quoteService.getQuoteByCode(code);
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public Flux<Quote> getAllQuote() {
         return quoteService.getAllQuote();
     }
-    
 
+    @GetMapping("/own")
+    public Flux<Quote> getOwnQuote() {
+        return quoteService.getOwnQuote();
+    }
 }
