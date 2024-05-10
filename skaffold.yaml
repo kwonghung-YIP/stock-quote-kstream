@@ -67,5 +67,11 @@ profiles:
             skipTests: false
             useHelmSecrets: false
             wait: false
-
+    portForward:
+      - resourceType: Service
+        resourceName: stock-quote-kstream
+        namespace: application
+        port: 8080
+        address: 0.0.0.0
+        localPort: 8080
 
