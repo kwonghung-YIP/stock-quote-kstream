@@ -3,8 +3,11 @@
 
 ```bash
 #test API with curl
-curl -v -u john:passwd http://localhost:8080/quote/find/MAR | jq .
+watch -n 2 "curl -v -u john:passwd http://localhost:8080/quote/find/MAR | jq ."
 curl -v -u john:passwd http://localhost:8080/quote/all | jq .
+curl -v -u john:passwd http://localhost:8080/quote/most-actives?n=6 | jq .
+curl -v -u john:passwd http://localhost:8080/quote/gainers?n=6 | jq .
+watch -n 1 'curl -s -u john:passwd http://localhost:8080/quote/losers?n=6 | jq .'
 
 #remove all container
 docker rm -f `docker ps -qa`
