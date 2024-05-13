@@ -1,0 +1,15 @@
+kubernetes:
+  cluster: cluster.local
+
+hivemq:
+  ordinals:
+    start: 1
+  replicas: 3
+  image:
+    registry: docker.io
+    name: hivemq/hivemq4
+    tag: dns-4.27.0
+  ports:
+    mqtt: 1883
+    ws: 8000
+    webui: 8080

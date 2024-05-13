@@ -1,0 +1,13 @@
+apiVersion: v2
+name: hivemq-cluster
+version: 1.0.0
+description: HiveMQ cluster deployment
+type: application
+keywords:
+- hivemq
+- mqtt
+home: https://github.com/kwonghung-YIP/kstream_and_spring_integration
+maintainers:
+- name: Hung YIP
+  email: kwonghung.yip@gmail.com
+appVersion: "4.27.0"

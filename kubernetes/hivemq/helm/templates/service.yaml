@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hivemq-webui
+spec:
+  type: ClusterIP
+  selector:
+    app: hivemq-node
+  ports:
+  - port: {{ .Values.hivemq.ports.webui }}
+    name: webui
+  sessionAffinity: ClientIP
+
+  

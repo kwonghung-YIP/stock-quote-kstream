@@ -1,0 +1,64 @@
+{{- with .Values.hivemq }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None
+  ports:
+  - port: {{ .ports.mqtt }}
+    name: mqtt
+  - port: {{ .ports.ws }}
+    name: ws
+  selector:
+    app: hivemq-node
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: node
+spec:
+  serviceName: "cluster-node"
+  replicas: {{ .replicas }}
+  ordinals:
+    start: {{ .ordinals.start }}
+  selector:
+    matchLabels:
+      app: hivemq-node
+  template:
+    metadata:
+      labels:
+        app: hivemq-node
+    spec:
+      containers:
+      - name: hivemq-dns
+        image: {{ .image.registry }}/{{ .image.name }}:{{ .image.tag }}
+        ports:
+        - containerPort: {{ .ports.mqtt }}
+          name: mqtt
+        - containerPort: {{ .ports.ws }}
+          name: ws
+        - containerPort: {{ .ports.webui }}
+          name: webui
+        env:
+        - name: HIVEMQ_DNS_DISCOVERY_ADDRESS
+          value: {{ printf "cluster.%s." (include "k8s.cluster.name" $) }}
+        - name: HIVEMQ_DNS_DISCOVERY_TIMEOUT
+          value: "20"
+        - name: HIVEMQ_DNS_DISCOVERY_INTERVAL
+          value: "21"
+        readinessProbe:
+          tcpSocket:
+            port: {{ .ports.mqtt }}
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          failureThreshold: 60
+        livenessProbe:
+          tcpSocket:
+            port: {{ .ports.mqtt }}
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          failureThreshold: 60
+{{- end }}

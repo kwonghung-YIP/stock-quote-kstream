@@ -37,6 +37,15 @@ profiles:
             version: 1.0.0
             namespace: postgresql
             createNamespace: true
+  - name: hivemq
+    deploy:
+      helm:
+        releases:
+          - name: hivemq
+            chartPath: ./kubernetes/hivemq/helm
+            version: 1.0.0
+            namespace: hivemq
+            createNamespace: true
   - name: stock-quote-kstream
     build:
       insecureRegistries:
