@@ -157,7 +157,80 @@ where code = 'AMD';
 call stock.nextPriceFeed('AAPL',1/52.0);
 call stock.genRandomPriceFeed();
 ```
+
+```bash
+docker run -it \
+  --rm --name=hivemq-cli \
+  --network mqtt-sink-connector_default --link hivemq \
+  hivemq/mqtt-cli shell
+```
+
+```bash
+connect --host=hivemq --port=1883
+sub -t quote --stay --jsonOutput
+```
+
+```bash
+docker run -it --rm \
+  --network mqtt-sink-connector_default --link hivemq \
+  hivemq/mqtt-cli shell
+
+docker exec -it hivemq /bin/bash
+docker exec -it hivemq cat conf/config.xml
+docker exec -it hivemq cat extensions/hivemq-enterprise-security-extension/conf/config.xml
+
+connect --host hivemq --port 1883 \
+    -u mqtt-user-1 -pw mqtt-password-1 \
+    --mqttVersion 5 --identifierPrefix hivemqcli \
+    --willTopic lastword --willMessage "I am die!" \
+    --topicAliasMax 10
+
+connect --host hivemq --port 1883 \
+    -u mqtt-user-1 -pw mqtt-password-1 \
+    --mqttVersion 5
+
+connect --host hivemq --port 1883 \
+    -u quote-publisher -pw abcd1234 \
+    --mqttVersion 5 \
+    --willTopic lastword --willMessage "I am die!"
+
+con -h hivemq -p 8000 -ws -ws:path /mqtt -V 5 -u e836ea84-7101-4097-a594-dc278b896288 -pw
+
+
+sub --stay --topic quote/111 \
+    --showTopics --jsonOutput
+
+sub --stay --topic listword \
+    --showTopics --jsonOutput -oc
+
+pub -t test -m hello -q 1
+sub -s -t test -q 1
+
+connect -h hivemq -p 1883 -ip hivemq_cli_ \
+  -Wt last-word -Wm "I'm will be back" -Wr
+
+pub -t quote/111 -m hello -q 1
+sub -s -t quote/111 -q 1
+sub -sJT -t quote/# -q 1
+sub -sJT -t $share/grp1/quote/# -q 1
+sub -sJT -t last-word -q 1
+
+docker run -it --rm \
+  --network mqtt-sink-connector_default --link hivemq \
+  node:22.2 /bin/bash
+
+npm install mqtt --save --global
+
+mqtt subscribe -v -h hivemq -p 1883 -i mqttjs_cli_1 -t quote/+
+
+java -jar hivemq-ese-helper.jar hash create -a PKCS5S2 -i 10 -s nNctCFrfwfZXW4oNi81AUQ== password
+
+java -jar hivemq-ese-helper.jar hash create -a PKCS5S2 -i 10 -s nNctCFrfwfZXW4oNi81AUQ== -p
+```
+
 References:
 [Kafka-UI configuration properties](https://docs.kafka-ui.provectus.io/configuration/misc-configuration-properties)
 [Kubernetes - DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 [Fix Powerline font for VSCode terminal](https://cloverinks.medium.com/oh-my-zsh-agnoster-theme-not-showing-correct-font-on-vscode-ubuntu-47b5e8dcbada)
+[hivemq-cli Reference](https://hivemq.github.io/mqtt-cli/docs/shell/connect/)
+[hivemq enterprise security extenstion config](https://docs.hivemq.com/hivemq-enterprise-security-extension/latest/getting-started.html#installation)

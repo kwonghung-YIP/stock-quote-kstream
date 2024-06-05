@@ -1,0 +1,35 @@
+name: mqtt-sink-connector
+services:
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: kafka
+    ports:
+      - 9092:9092
+  hivemq:
+    build:
+      context: ./src/main/resources/hivemq
+      args:
+        HIVEMQ_VERSION: 4.28.1
+      no_cache: true
+    #image: hivemq/hivemq4:4.25.0
+    container_name: hivemq
+    ports:
+      - 1883:1883
+      - 8000:8000
+      - 8080:8080
+    labels:
+      org.springframework.boot.service-connection: hivemq
+      org.springframework.boot.readiness-check.tcp.disable: true
+    depends_on:
+      - keycloak
+  keycloak:
+    image: keycloak/keycloak:24.0.4-0
+    container_name: keycloak
+    command: ["start-dev","--import-realm","-Dkeycloak.profile.feature.upload_scripts=enabled","--verbose"]
+    ports:
+      - 8081:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./src/main/resources/keycloak/import:/opt/keycloak/data/import

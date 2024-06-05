@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: mqtt-sink-connector
+
+  docker:
+    compose:
+      enabled: false
+
+  kafka:
+    consumer:
+      group-id: mqtt-sink-connector
+
+  profiles:
+    group:
+      local:
+        - local-docker-compose
+        - quote-msg-producer
+    default: local
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - local-docker-compose
+  
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: start-only
+      start:
+        command: start
+        log-level: debug

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<enterprise-security-extension
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="config.xsd"
+        version="1">
+    <access-log>
+        <enabled>true</enabled>
+        <file-name>access</file-name>
+        <sub-folder>access</sub-folder>
+    </access-log>
+    <realms>
+        <!-- https://docs.hivemq.com/hivemq-enterprise-security-extension/latest/ese.html#file-based -->
+        <file-realm>
+            <name>file-realm</name>
+            <enabled>true</enabled>
+            <configuration>
+                <file-path>conf/ese-file-realm.xml</file-path>
+            </configuration>
+        </file-realm>
+        <jwt-realm>
+            <name>keycloak-my-app</name>
+            <enabled>true</enabled>
+            <configuration>
+                <jwks-endpoint>http://192.168.19.134:8081/realms/my-realm/protocol/openid-connect/certs</jwks-endpoint>
+                <jwks-default-cache-duration>1800</jwks-default-cache-duration>
+                <tls-trust-store password="abcd1234">/opt/hivemq/extensions/hivemq-enterprise-security-extension/conf/oauth2-trust.jks</tls-trust-store>
+                <introspection-endpoint>http://192.168.19.134:8081/realms/my-realm/protocol/openid-connect/token/introspect</introspection-endpoint>
+                <simple-auth>
+                    <username>my-app</username>
+                    <password>nQZyHdlcUSOZBmf0uiN6P7EqnECYbLjO</password>
+                </simple-auth>
+            </configuration>
+        </jwt-realm>
+        <jwt-realm>
+            <name>jwt-auth0</name>
+            <enabled>false</enabled>
+            <configuration>
+                <jwks-endpoint>https://dev-phitetyl17bhqyll.us.auth0.com/.well-known/jwks.json</jwks-endpoint>
+                <jwks-default-cache-duration>1800</jwks-default-cache-duration>
+                <tls-trust-store password="abcd1234">/opt/hivemq/extensions/hivemq-enterprise-security-extension/conf/oauth2-trust.jks</tls-trust-store>
+                <simple-auth>
+                    <username>a47IwQT63UQUJMPQw4MBcqeL3WYv5X45</username>
+                    <password>ntskNoJEhgtRqKf_h8EpxbpXyIrs34DDSg_NaeouHjHCvn3DZUYbQDFqP37AkTPM</password>
+                </simple-auth>
+            </configuration>
+        </jwt-realm>
+    </realms>
+    <pipelines>
+        <!-- secure access to the mqtt broker -->
+        <listener-pipeline listener="my-tcp-listener">
+            <!-- authenticate over a file -->
+            <file-authentication-manager>
+                <realm>file-realm</realm>
+            </file-authentication-manager>
+            <!-- authorize over a file -->
+            <file-authorization-manager>
+                <realm>file-realm</realm>
+            </file-authorization-manager>
+        </listener-pipeline>
+        <listener-pipeline listener="my-ws-listener">
+            <jwt-authentication-manager>
+                <realm>keycloak-my-app</realm>
+                <!-- every tag in the configuration must contain a value. All tags except the realm name and custom claims have a default value. -->
+                <jwt-validation>
+                    <!-- default: no disconnect after expiration date -->
+                    <exp-grace disconnect-after-expiry="true">300</exp-grace>
+                    <!-- default: false -->
+                    <enable-introspection sampling="1.0">true</enable-introspection>
+                    <reserved-claims>
+                        <iss>http://192.168.19.134:8081/realms/my-realm</iss>
+                        <sub>${mqtt-username}</sub>
+                        <!-- scope is an OpendID Connect standard not a JWT standard -->
+                        <!--<scope alt="scope">email quote_sub profile</scope>-->
+                    </reserved-claims>
+                </jwt-validation>
+            </jwt-authentication-manager>
+            <file-authorization-manager>
+                <realm>file-realm</realm>
+                <use-authorization-key>false</use-authorization-key>
+                <use-authorization-role-key>true</use-authorization-role-key>
+            </file-authorization-manager>
+        </listener-pipeline>
+    </pipelines>
+</enterprise-security-extension>

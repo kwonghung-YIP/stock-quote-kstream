@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<enterprise-security-extension
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="config.xsd"
+        version="1">
+    <realms>
+        <!-- a oauth provider-->
+        <jwt-realm>
+            <name>jwt-provider</name>
+            <enabled>true</enabled>
+            <configuration>
+                <jwks-endpoint>https://jwt-host/keys</jwks-endpoint>
+                <introspection-endpoint>https://jwt-host/introspection</introspection-endpoint>
+                <simple-auth>
+                    <username>hivemq</username>
+                    <password>password</password>
+                </simple-auth>
+            </configuration>
+        </jwt-realm>
+        <!-- a postgresql db-->
+        <sql-realm>
+            <name>postgres-backend</name>
+            <enabled>true</enabled>
+            <configuration>
+                <db-type>POSTGRES</db-type>
+                <db-name>hivemq</db-name>
+                <db-host>hostname</db-host>
+                <db-port>5432</db-port>
+                <db-username>hivemq</db-username>
+                <db-password>password</db-password>
+            </configuration>
+        </sql-realm>
+    </realms>
+    <pipelines>
+        <!-- secure access to the mqtt broker -->
+        <listener-pipeline listener="ALL">
+            <!-- authenticate with provided jwts -->
+            <jwt-authentication-manager>
+                <realm>jwt-provider</realm>
+                <jwt-validation>
+                    <exp-grace disconnect-after-expiry="true">300</exp-grace>
+                </jwt-validation>
+            </jwt-authentication-manager>
+            <!-- authorize over a sql db -->
+            <sql-authorization-manager>
+                <realm>postgres-backend</realm>
+                <use-authorization-key>false</use-authorization-key>
+                <use-authorization-role-key>true</use-authorization-role-key>
+            </sql-authorization-manager>
+        </listener-pipeline>
+        <!-- secure access to the control center -->
+        <control-center-pipeline>
+            <!-- authenticate over a sql db -->
+            <sql-authentication-manager>
+                <realm>postgres-backend</realm>
+            </sql-authentication-manager>
+            <!-- authorize over a sql db -->
+            <sql-authorization-manager>
+                <realm>postgres-backend</realm>
+                <use-authorization-key>true</use-authorization-key>
+                <use-authorization-role-key>true</use-authorization-role-key>
+            </sql-authorization-manager>
+        </control-center-pipeline>
+    </pipelines>
+</enterprise-security-extension>
