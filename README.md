@@ -31,6 +31,24 @@ docker exec -it kafka \
     --property print.headers=true \
     --property print.key=true
 
+cat <<EOF | tee client.properties
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="peter" password="peter-secret";
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=PLAIN
+EOF
+
+docker exec -it kafka \
+    /opt/kafka/bin/kafka-topics.sh \
+    --bootstrap-server localhost:9092 \
+    --command-config client.properties \
+    --list
+
+docker exec -it kafka \
+    /opt/kafka/bin/kafka-console-producer.sh \
+    --bootstrap-server localhost:9092 \
+    --producer.config /opt/kafka/bin/client.properties \
+    --topic quote "Hello!"
+
 docker exec -it -w /opt/kafka/bin kafka  \
     /bin/bash
 
@@ -194,7 +212,7 @@ connect --host hivemq --port 1883 \
     --mqttVersion 5 \
     --willTopic lastword --willMessage "I am die!"
 
-con -h hivemq -p 8000 -ws -ws:path /mqtt -V 5 -u e836ea84-7101-4097-a594-dc278b896288 -pw
+con -h hivemq -p 8000 -ws -ws:path /mqtt -V 5 -u 477c250c-aea6-43bb-aa54-3af39ffb587d -pw
 
 
 sub --stay --topic quote/111 \

@@ -30,3 +30,14 @@ spring:
       start:
         command: start
         log-level: debug
+
+  kafka:
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
+      # sasl.jaas.config should be in a single line or else may cause an exception
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='peter' password='peter-secret';
+    #consumer:
+    #  properties:
+    #    security.protocol: SASL_PLAINTEXT
+    #    sasl.mechanism: PLAIN
