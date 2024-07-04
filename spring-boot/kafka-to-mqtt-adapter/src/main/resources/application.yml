@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: kafka-to-mqtt-adapter
+    
+  docker:
+    compose:
+      enabled: false
+
+  profiles:
+    group:
+      local:
+        - local-with-docker-compose
+        - quote-msg-producer
+    default: local
+
+  kafka:
+    consumer:
+      group-id: kafka-to-mqtt-adapter
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: org.hung.stock.domain
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - local-with-docker-compose
+  
+  docker:
+    compose:
+      enabled: true
+      file: src/test/resources/docker-compose.yaml
+      start:
+        command: up
+      stop:
+        command: down
+      
+
+  kafka:
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
+      # sasl.jaas.config should be in a single line or else may cause an exception
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='${kafka-to-mqtt.kafka.broker.sasl.username}' password='${kafka-to-mqtt.kafka.broker.sasl.password}';
+
+kafka-to-mqtt:
+  kafka:
+    broker:
+      sasl:
+        username: peter
+        password: peter-secret
+    topics:
+      quote: quote
+  mqtt:
+    client-id: testing
+    connect-option:
+      serverURIs:
+        - tcp://localhost:1883
+      username: quote-publisher
+      password: abcd1234
+      topicAliasMaximum: 100
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - quote-msg-producer
+
+  kafka:
+    producer:
+      client-id: quote-msg-producer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+quote-msg-producer:
+  quote:
+    topic: ${kafka-to-mqtt.kafka.topics.quote}
+    fixed-delay: ${random.int[800,1200]}
+    initial-delay: ${random.int[500]}

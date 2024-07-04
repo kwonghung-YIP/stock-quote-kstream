@@ -47,7 +47,7 @@ docker exec -it kafka \
     /opt/kafka/bin/kafka-console-producer.sh \
     --bootstrap-server localhost:9092 \
     --producer.config /opt/kafka/bin/client.properties \
-    --topic quote "Hello!"
+    --topic quote
 
 docker exec -it -w /opt/kafka/bin kafka  \
     /bin/bash
@@ -244,6 +244,11 @@ mqtt subscribe -v -h hivemq -p 1883 -i mqttjs_cli_1 -t quote/+
 java -jar hivemq-ese-helper.jar hash create -a PKCS5S2 -i 10 -s nNctCFrfwfZXW4oNi81AUQ== password
 
 java -jar hivemq-ese-helper.jar hash create -a PKCS5S2 -i 10 -s nNctCFrfwfZXW4oNi81AUQ== -p
+```
+
+```bash
+mvn clean install && mvn spring-boot:run -pl quote-kstream-processor
+mvn clean install && mvn spring-boot:run -pl kafka-to-mqtt-adapter
 ```
 
 References:

@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: quote-kstream-processor
+    
+  docker:
+    compose:
+      enabled: false
+    
+  profiles:
+    group:
+      local:
+        - local-with-docker-compose
+        - feeds-msg-producer
+    default: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - local-with-docker-compose
+  
+  docker:
+    compose:
+      enabled: true
+      file: src/test/resources/docker-compose.yaml
+      start:
+        command: up
+      stop:
+        command: down
+
+  security:
+    user:
+      name: john
+      password: passwd
+      roles: user
+
+  kafka:
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
+      # sasl.jaas.config should be in a single line or else may cause an exception
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='${quote-processor.broker.sasl.username}' password='${quote-processor.broker.sasl.password}';
+
+    streams:
+      bootstrap-servers: localhost:9092
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        spring.json.trusted.packages: org.hung.stock.domain
+        num.partitions: "10"
+        application.server: "127.0.1.1:9092"
+        # Assign a random path for state store or else the cache from the last copy will be reused even restart the Spring Boot
+        state.dir: "/tmp/kafka-streams/${random.uuid}"
+
+quote-processor:
+  broker:
+    sasl:
+      username: peter
+      password: peter-secret
+  topics:
+    price-feed: price-feed
+    volume-feed: volume-feed
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include:
+          - info
+          - env
+          - beans
+          - scheduledtasks
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - feeds-msg-producer
+  
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+feeds-msg-producer:
+  price-feed:
+    topic: ${quote-processor.topics.price-feed}
+    fixed-delay: ${random.int[800,1200]}
+    initial-delay: ${random.int[500]}
+  volume-feed:
+    topic: ${quote-processor.topics.volume-feed}
+    fixed-delay: ${random.int[800,1200]}
+    initial-delay: ${random.int[500]}

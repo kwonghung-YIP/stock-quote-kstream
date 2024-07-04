@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<enterprise-security-extension
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="config.xsd"
+        version="1">
+    <access-log>
+        <enabled>true</enabled>
+        <file-name>access</file-name>
+        <sub-folder>access</sub-folder>
+    </access-log>
+    <realms>
+        <!-- https://docs.hivemq.com/hivemq-enterprise-security-extension/latest/ese.html#file-based -->
+        <file-realm>
+            <name>file-realm</name>
+            <enabled>true</enabled>
+            <configuration>
+                <file-path>conf/ese-file-realm.xml</file-path>
+            </configuration>
+        </file-realm>
+    </realms>
+    <pipelines>
+        <!-- secure access to the mqtt broker -->
+        <listener-pipeline listener="my-tcp-listener">
+            <!-- authenticate over a file -->
+            <file-authentication-manager>
+                <realm>file-realm</realm>
+            </file-authentication-manager>
+            <!-- authorize over a file -->
+            <file-authorization-manager>
+                <realm>file-realm</realm>
+            </file-authorization-manager>
+        </listener-pipeline>
+    </pipelines>
+</enterprise-security-extension>
