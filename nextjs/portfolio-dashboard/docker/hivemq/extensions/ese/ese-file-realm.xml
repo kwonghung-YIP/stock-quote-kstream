@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ese-file-realm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:noNamespaceSchemaLocation="ese-file-realm.xsd">
+                
+    <!-- https://docs.hivemq.com/hivemq-enterprise-security-extension/latest/ese.html#file-realm-file-mqtt-params -->
+    <mqtt>
+        <!-- users are fetched via AUTHENTICATION_KEY-->
+        <users>
+            <user>
+                <name>quote-publisher</name>
+                <!-- 
+                    ese-helper to generate password hash
+                    docker exec -it hivemq /bin/bash
+                    java -jar /opt/hivemq/extensions/hivemq-enterprise-security-extension/helper/jvm/hivemq-ese-helper.jar hash create -a PKCS5S2 -i 10 -s nNctCFrfwfZXW4oNi81AUQ== -p
+                -->
+                <password encoding="Base64">5U8gBcN38epLeNPOcsvf18JPoY/RqJXqsXpwhcPQ8CQ=</password>
+                <iterations>10</iterations>
+                <salt encoding="Base64">nNctCFrfwfZXW4oNi81AUQ==</salt>
+                <algorithm>PKCS5S2</algorithm>
+                <roles>
+                    <role>send-will-message</role>
+                </roles>
+                <permissions>
+                    <permission>
+                        <topic>quote/+</topic>
+                        <activity>PUBLISH</activity>
+                        <qos>ZERO_ONE</qos>
+                        <retain>ALL</retain>
+                    </permission>                
+                </permissions>
+            </user>
+            <user>
+                <name>mqtt-user-1</name>
+                <password>mqtt-password-1</password>
+                <permissions>
+                    <permission>
+                        <topic>#</topic>
+                        <qos>ALL</qos>
+                        <activity>ALL</activity>
+                        <retain>ALL</retain>
+                        <shared-subscription>ALL</shared-subscription>
+                        <shared-group>group-1</shared-group>
+                    </permission>
+                </permissions>
+            </user>
+
+            <user>
+                <name>mqtt-user-2</name>
+                <!-- <password>mqtt-password-2</password> -->
+                <!-- https://docs.hivemq.com/ese/latest/enterprise-security-extension/ese-helper.html#hash -->
+                <password encoding="Base64">aDGGvi/kW+ba1ZlQxObGZT7kNK7Vg4qkFR7HvHapCGk=</password>
+                <iterations>10</iterations>
+                <salt>mqtt-password-2-salt</salt>
+                <algorithm>PKCS5S2</algorithm>
+                <roles>
+                    <role>publisher</role>
+                    <role>subscriber</role>
+                </roles>
+            </user>
+        </users>
+
+        <!-- roles are fetched via AUTHENTICATION_ROLE_KEY-->
+        <roles>
+            <role>
+                <id>openid email quote_sub profile</id>
+                <permissions>
+                    <permission>
+                        <topic>quote/+</topic>
+                        <qos>ALL</qos>
+                        <activity>SUBSCRIBE</activity>
+                    </permission>
+                </permissions>
+            </role>
+
+            <role>
+                <id>send-will-message</id>
+                <permissions>
+                    <permission>
+                        <topic>lastword</topic>
+                        <qos>ALL</qos>
+                        <activity>PUBLISH</activity>
+                    </permission>
+                </permissions>
+            </role>
+
+            <role>
+                <id>publisher</id>
+                <permissions>
+                    <permission>
+                        <topic>topic-1</topic>
+                        <qos>ALL</qos>
+                        <activity>PUBLISH</activity>
+                    </permission>
+                    <permission>
+                        <topic>topic-2</topic>
+                        <qos>ALL</qos>
+                        <activity>PUBLISH</activity>
+                    </permission>
+                </permissions>
+            </role>
+
+            <role>
+                <id>subscriber</id>
+                <permissions>
+                    <permission>
+                        <topic>topic-3</topic>
+                        <qos>ALL</qos>
+                        <activity>SUBSCRIBE</activity>
+                    </permission>
+                </permissions>
+            </role>
+        </roles>
+    </mqtt>
+</ese-file-realm>

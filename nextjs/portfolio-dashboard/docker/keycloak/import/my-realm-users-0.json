@@ -1,0 +1,50 @@
+{
+  "realm" : "my-realm",
+  "users" : [ {
+    "id" : "477c250c-aea6-43bb-aa54-3af39ffb587d",
+    "username" : "john",
+    "firstName" : "john",
+    "lastName" : "doe",
+    "email" : "john@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1717114268315,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "df400137-afb9-4474-98f7-a331c0bca850",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1717114283830,
+      "secretData" : "{\"value\":\"4gaCLKeyl+K7jyAH2Db5WcJFsGR9ufcan5FCRWKReRM=\",\"salt\":\"7k9LbKil/WwHKMR15fmf1A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-my-realm", "app-user" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c2fb1178-cfa1-48dd-967e-36239f320a7b",
+    "username" : "peter",
+    "firstName" : "Peter",
+    "lastName" : "Pan",
+    "email" : "peter.pan@gmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1717114311642,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "c9ed2bce-00c8-41e3-8bc4-18ec14edb1a2",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1717114326488,
+      "secretData" : "{\"value\":\"X+hC/tDAgaZ/APGCD78zx0838JRbeStzkH6j+NJTz9jq8CxemK5adCMCTOFXD2OORvsUiLLl5IGmSWbjH7ub2A==\",\"salt\":\"jlDEt6hXZyNqPwsOPXhKMw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-my-realm" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

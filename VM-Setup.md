@@ -1,4 +1,4 @@
-tools install in develop VM
+tools install in develop VM for Spring Boot development
 - Ubuntu desktop
 - VS Code
 - [oh-my-zsh -> git,curl,zsh]()
@@ -11,6 +11,10 @@ tools install in develop VM
 - [jq](https://jqlang.github.io/jq/download/)
 - Oracle JDK 21
 - Maven
+
+for frontend development
+- [nodejs](https://nodejs.org/en/download/package-manager)
+- [nextjs]()
 
 microk8s enabled components
 - dns

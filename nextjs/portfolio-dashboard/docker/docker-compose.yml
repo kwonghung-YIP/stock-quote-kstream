@@ -1,0 +1,28 @@
+name: portfolio-dashboard
+services:
+  keycloak:
+    image: keycloak/keycloak:25.0.1-0
+    container_name: keycloak
+    command: ["start-dev","--import-realm","-Dkeycloak.profile.feature.upload_scripts=enabled","--verbose"]
+    ports:
+      - 8081:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import
+
+  hivemq:
+    build:
+      context: ./hivemq
+      args:
+        HIVEMQ_VERSION: 4.30.0 #dns-4.30.0
+      no_cache: true
+    #image: hivemq/hivemq4:4.25.0
+    container_name: hivemq
+    ports:
+      - 1883:1883
+      - 8000:8000
+      - 8080:8080
+    depends_on:
+      - keycloak
